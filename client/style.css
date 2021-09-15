@@ -19,3 +19,21 @@ html, body {
   font-size: 2em;
   text-align: center;
 }
+
+response {
+  display: flex;
+  flex-direction: column;
+  justify-content: space-around;
+  align-items: center;
+}
+
+response > id {
+  font-weight: bold;
+  margin-block-start: 1.33em;
+  margin-block-end: 1.33em;
+}
+
+response > message {
+  margin-block-start: 1em;
+  margin-block-end: 1em;
+}

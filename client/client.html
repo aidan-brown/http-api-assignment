@@ -6,20 +6,72 @@
   
   <script src="https://cdnjs.cloudflare.com/ajax/libs/babel-core/5.8.34/browser.min.js"></script>
   <script type="text/babel">
+      let pageSelect = '';
+      let typeSelect = '';
+      let contentSection = '';
 
+    const handleResponse = (xhr) => {
+      let response = xhr.response;
+
+      contentSection.innerHTML = '';
+
+      if (typeSelect.value == 'application/json'){
+        response = JSON.parse(response);
+        if (response.id){
+          let idElem = document.createElement('h4');
+          idElem.innerHTML = response.id;
+          contentSection.append(idElem);
+        }
+        let messageElem = document.createElement('p');
+        messageElem.innerHTML = `Message: ${response.message}`;
+        contentSection.append(messageElem);
+      } else {
+        let parser = new DOMParser();
+        response = parser.parseFromString(response, 'text/xml');
+        contentSection.append(response.firstChild);
+      }
+
+      console.log(response);
+    }
+
+    const sendRequest = () => {
+      const url = window.location + pageSelect.value;
+      console.log(url);
+      sendAjax(url);
+    }
+
+    const sendAjax = (url) => {
+      const xhr = new XMLHttpRequest();
+      xhr.open('GET', url);
+      xhr.setRequestHeader('Accept', typeSelect.value);
+
+      xhr.onload = () => handleResponse(xhr);
+
+      xhr.send();
+    }
+
+    const init = () => {
+      pageSelect = document.querySelector('#page');
+      typeSelect = document.querySelector('#type');
+      contentSection = document.querySelector('#content');
+
+      document.querySelector('#send').addEventListener('click', sendRequest);
+    }
+
+    window.onload = init;
   </script>
 </head>
 <body>
   <section id="top">
     <h3>Status Code Tests</h3>
     <select id="page">
-      <option value="/success">Success</option>
-      <option value="/badRequest">Bad Request</option>
-      <option value="/unauthorized">Unauthorized</option>
-      <option value="/forbidden">Forbidden</option>
-      <option value="/internal">Internal</option>
-      <option value="/notImplemented">Not Implemented</option>
-      <option value="/notFound">Not Found</option>
+      <option value="success">Success</option>
+      <option value="badRequest">Bad Request</option>
+      <option value="unauthorized">Unauthorized</option>
+      <option value="forbidden">Forbidden</option>
+      <option value="internal">Internal</option>
+      <option value="notImplemented">Not Implemented</option>
+      <option value="notFound">Not Found</option>
     </select>
     <select id="type">
       <option value="application/json">JSON</option>
